@@ -1081,29 +1081,44 @@ export default function DetalhesViagem() {
               );
             })()}
 
-            <div className="space-y-2">
-              <Label>Cor do Grupo/Família (opcional)</Label>
-              <p className="text-xs text-gray-500 mb-2">Marque clientes do mesmo grupo com a mesma cor para facilitar identificação</p>
-              <Select 
-                value={formData.cor_grupo} 
-                onValueChange={(value) => setFormData({...formData, cor_grupo: value})}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Sem grupo" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value={null}>Sem cor</SelectItem>
-                  <SelectItem value="vermelho">🔴 Vermelho</SelectItem>
-                  <SelectItem value="azul">🔵 Azul</SelectItem>
-                  <SelectItem value="verde">🟢 Verde</SelectItem>
-                  <SelectItem value="amarelo">🟡 Amarelo</SelectItem>
-                  <SelectItem value="roxo">🟣 Roxo</SelectItem>
-                  <SelectItem value="rosa">🩷 Rosa</SelectItem>
-                  <SelectItem value="laranja">🟠 Laranja</SelectItem>
-                  <SelectItem value="marrom">🟤 Marrom</SelectItem>
-                  <SelectItem value="cinza">⚫ Cinza</SelectItem>
-                </SelectContent>
-              </Select>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Cor do Grupo/Família (opcional)</Label>
+                <p className="text-xs text-gray-500 mb-2">Identifique grupos ou famílias com cores</p>
+                <Select 
+                  value={formData.cor_grupo} 
+                  onValueChange={(value) => setFormData({...formData, cor_grupo: value})}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Sem grupo" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value={null}>Sem cor</SelectItem>
+                    <SelectItem value="vermelho">🔴 Vermelho</SelectItem>
+                    <SelectItem value="azul">🔵 Azul</SelectItem>
+                    <SelectItem value="verde">🟢 Verde</SelectItem>
+                    <SelectItem value="amarelo">🟡 Amarelo</SelectItem>
+                    <SelectItem value="roxo">🟣 Roxo</SelectItem>
+                    <SelectItem value="rosa">🩷 Rosa</SelectItem>
+                    <SelectItem value="laranja">🟠 Laranja</SelectItem>
+                    <SelectItem value="marrom">🟤 Marrom</SelectItem>
+                    <SelectItem value="cinza">⚫ Cinza</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Número do Grupo</Label>
+                <p className="text-xs text-gray-500 mb-2">Ex: Azul Grupo 1, Azul Grupo 2</p>
+                <Input
+                  type="number"
+                  min="1"
+                  value={formData.numero_grupo || 1}
+                  onChange={(e) => setFormData({...formData, numero_grupo: parseInt(e.target.value) || 1})}
+                  disabled={!formData.cor_grupo}
+                  className={!formData.cor_grupo ? "bg-gray-100" : ""}
+                  placeholder="1"
+                />
+              </div>
             </div>
 
             <div className="flex items-center gap-2 mt-4">
