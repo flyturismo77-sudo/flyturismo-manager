@@ -392,25 +392,24 @@ export default function DetalhesViagem() {
           <tbody>
     `;
 
-    const getCorHex = (cor, grupo) => {
-      if (!cor) return null;
-      const numGrupo = grupo || 1;
-      const coresHex = {
-        vermelho: ['#fca5a5', '#ef4444', '#b91c1c', '#7f1d1d'],
-        azul: ['#93c5fd', '#3b82f6', '#1d4ed8', '#1e3a8a'],
-        verde: ['#6ee7b7', '#10b981', '#047857', '#064e3b'],
-        amarelo: ['#fde047', '#eab308', '#a16207', '#713f12'],
-        roxo: ['#d8b4fe', '#a855f7', '#7e22ce', '#581c87'],
-        rosa: ['#f9a8d4', '#ec4899', '#be185d', '#831843'],
-        laranja: ['#fdba74', '#f97316', '#c2410c', '#7c2d12'],
-        marrom: ['#d97706', '#b45309', '#92400e', '#78350f'],
-        cinza: ['#d1d5db', '#6b7280', '#374151', '#1f2937']
-      };
-      const grupoIndex = (numGrupo - 1) % 4;
-      return coresHex[cor]?.[grupoIndex] || coresHex[cor]?.[0];
+    const coresHex = {
+      vermelho: '#ef4444',
+      azul: '#3b82f6',
+      verde: '#10b981',
+      amarelo: '#eab308',
+      roxo: '#a855f7',
+      rosa: '#ec4899',
+      laranja: '#f97316',
+      marrom: '#92400e',
+      cinza: '#6b7280'
     };
 
     listaImpressao.forEach((c, index) => {
+      const prevCliente = index > 0 ? listaImpressao[index - 1] : null;
+      const isNewGroup = prevCliente && (
+        prevCliente.cor_grupo !== c.cor_grupo || 
+        prevCliente.numero_grupo !== c.numero_grupo
+      );
       let tipo = "Adulto";
       let classe = "bg-adulto";
 
@@ -430,13 +429,20 @@ export default function DetalhesViagem() {
         assento = `<span class="assento-box">#${c.poltrona}</span>`;
       }
 
-      const corHex = getCorHex(c?.cor_grupo, c?.numero_grupo);
-      const corBolinha = corHex
+      const corBolinha = c?.cor_grupo && coresHex[c.cor_grupo] 
         ? `<div style="display: inline-flex; align-items: center; gap: 4px;">
-             <div style="width: 16px; height: 16px; border-radius: 50%; background: ${corHex}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+             <div style="width: 16px; height: 16px; border-radius: 50%; background: ${coresHex[c.cor_grupo]}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
              <span style="font-size: 10px; font-weight: bold; color: #64748b;">G${c.numero_grupo || 1}</span>
            </div>`
         : '-';
+
+      if (isNewGroup) {
+        html += `
+          <tr>
+            <td colspan="8" style="height: 3px; background: linear-gradient(to right, transparent, #cbd5e1, transparent); padding: 0;"></td>
+          </tr>
+        `;
+      }
 
       html += `
         <tr>
@@ -772,34 +778,38 @@ export default function DetalhesViagem() {
                 
                 return (a?.nome_completo || '').localeCompare(b?.nome_completo || '');
               })
-              .map((cliente, index) => {
-                const getCorDisplay = (cor, grupo) => {
-                  if (!cor) return '';
-                  const numGrupo = grupo || 1;
-                  const cores = {
-                    vermelho: ['bg-red-300', 'bg-red-500', 'bg-red-700', 'bg-red-900'],
-                    azul: ['bg-blue-300', 'bg-blue-500', 'bg-blue-700', 'bg-blue-900'],
-                    verde: ['bg-green-300', 'bg-green-500', 'bg-green-700', 'bg-green-900'],
-                    amarelo: ['bg-yellow-300', 'bg-yellow-500', 'bg-yellow-700', 'bg-yellow-900'],
-                    roxo: ['bg-purple-300', 'bg-purple-500', 'bg-purple-700', 'bg-purple-900'],
-                    rosa: ['bg-pink-300', 'bg-pink-500', 'bg-pink-700', 'bg-pink-900'],
-                    laranja: ['bg-orange-300', 'bg-orange-500', 'bg-orange-700', 'bg-orange-900'],
-                    marrom: ['bg-amber-600', 'bg-amber-700', 'bg-amber-800', 'bg-amber-900'],
-                    cinza: ['bg-gray-300', 'bg-gray-500', 'bg-gray-700', 'bg-gray-900']
-                  };
-                  const grupoIndex = (numGrupo - 1) % 4;
-                  return cores[cor]?.[grupoIndex] || cores[cor]?.[0] || '';
+              .map((cliente, index, array) => {
+                const coresDisplay = {
+                  vermelho: 'bg-red-500',
+                  azul: 'bg-blue-500',
+                  verde: 'bg-green-500',
+                  amarelo: 'bg-yellow-500',
+                  roxo: 'bg-purple-500',
+                  rosa: 'bg-pink-500',
+                  laranja: 'bg-orange-500',
+                  marrom: 'bg-amber-800',
+                  cinza: 'bg-gray-500'
                 };
 
+                const prevCliente = index > 0 ? array[index - 1] : null;
+                const isNewGroup = prevCliente && (
+                  prevCliente.cor_grupo !== cliente.cor_grupo || 
+                  prevCliente.numero_grupo !== cliente.numero_grupo
+                );
+
                 return (
+                  <React.Fragment key={cliente.id}>
+                    {isNewGroup && (
+                      <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2"></div>
+                    )}
               <div key={cliente.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-3 flex-1">
                     <div className="flex items-center gap-2 min-w-[80px]">
                        <span className="text-sm font-bold text-gray-500">#{index + 1}</span>
-                       {cliente?.cor_grupo && (
+                       {cliente?.cor_grupo && coresDisplay[cliente.cor_grupo] && (
                          <div className="flex items-center gap-1">
-                           <div className={`w-5 h-5 rounded-full ${getCorDisplay(cliente.cor_grupo, cliente.numero_grupo)} border-2 border-white shadow-md`} title={`${cliente.cor_grupo} - Grupo ${cliente.numero_grupo || 1}`}></div>
+                           <div className={`w-5 h-5 rounded-full ${coresDisplay[cliente.cor_grupo]} border-2 border-white shadow-md`} title={`${cliente.cor_grupo} - Grupo ${cliente.numero_grupo || 1}`}></div>
                            <span className="text-xs font-semibold text-gray-600">G{cliente.numero_grupo || 1}</span>
                          </div>
                        )}
@@ -866,6 +876,7 @@ export default function DetalhesViagem() {
                   </div>
                   </div>
                   </div>
+                  </React.Fragment>
                   );
                   })}
             {filteredClientes.length === 0 && (
