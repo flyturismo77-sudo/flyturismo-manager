@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Armchair, User, X, Search, MapPin, Printer, Save } from "lucide-react";
+import { Armchair, User, X, Search, MapPin, Printer, Save, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -17,12 +17,16 @@ import {
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import DoubleDeckLayout from "../components/assentos/DoubleDeckLayout";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function Assentos() {
   const [selectedViagem, setSelectedViagem] = useState("");
   const [selectedSeat, setSelectedSeat] = useState(null);
   const [showDialog, setShowDialog] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState("mapa");
+  const [selectedClientes, setSelectedClientes] = useState([]);
+  const [mensagemGrupo, setMensagemGrupo] = useState("");
   const queryClient = useQueryClient();
 
   const { data: viagens = [] } = useQuery({
@@ -430,6 +434,64 @@ export default function Assentos() {
   const seatRows = renderSeatsLayout();
   const isDoubleDeck = viagemSelecionada?.modelo_onibus === 'DD';
 
+  const enviarWhatsApp = (cliente) => {
+    if (!cliente.telefone) {
+      alert('Cliente não possui telefone cadastrado!');
+      return;
+    }
+    const telefone = cliente.telefone.replace(/\D/g, '');
+    const numero = telefone.startsWith('55') ? telefone : `55${telefone}`;
+    const mensagem = `Olá ${cliente.nome_completo}! 
+    
+📌 Informações da sua viagem:
+🚌 ${viagemSelecionada?.nome} - ${viagemSelecionada?.destino}
+📅 Saída: ${format(new Date(viagemSelecionada?.data_saida), "dd/MM/yyyy")}
+${cliente.poltrona ? `🪑 Poltrona: #${cliente.poltrona}` : '⚠️ Assento ainda não definido'}
+${cliente.local_embarque ? `📍 Embarque: ${cliente.local_embarque}` : ''}
+
+Qualquer dúvida, estamos à disposição!`;
+    
+    const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
+    window.open(url, '_blank');
+  };
+
+  const toggleClienteSelection = (clienteId) => {
+    setSelectedClientes(prev => 
+      prev.includes(clienteId) 
+        ? prev.filter(id => id !== clienteId)
+        : [...prev, clienteId]
+    );
+  };
+
+  const enviarWhatsAppGrupo = () => {
+    if (selectedClientes.length === 0) {
+      alert('Selecione pelo menos um cliente!');
+      return;
+    }
+
+    const mensagemBase = mensagemGrupo || `Olá! 
+    
+📌 Informações da viagem:
+🚌 ${viagemSelecionada?.nome} - ${viagemSelecionada?.destino}
+📅 Saída: ${format(new Date(viagemSelecionada?.data_saida), "dd/MM/yyyy")}
+
+Qualquer dúvida, estamos à disposição!`;
+
+    selectedClientes.forEach(clienteId => {
+      const cliente = clientesDaViagem.find(c => c.id === clienteId);
+      if (cliente?.telefone) {
+        const telefone = cliente.telefone.replace(/\D/g, '');
+        const numero = telefone.startsWith('55') ? telefone : `55${telefone}`;
+        const mensagemPersonalizada = `Olá ${cliente.nome_completo}!\n\n${mensagemBase}${cliente.poltrona ? `\n🪑 Sua poltrona: #${cliente.poltrona}` : ''}`;
+        const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(mensagemPersonalizada)}`;
+        window.open(url, '_blank');
+      }
+    });
+
+    setSelectedClientes([]);
+    setMensagemGrupo("");
+  };
+
   return (
     <div className="p-6 md:p-8 space-y-6">
       <div>
@@ -480,6 +542,19 @@ export default function Assentos() {
 
         {selectedViagem && (
           <CardContent className="p-6">
+            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+              <TabsList className="grid w-full grid-cols-2 mb-6">
+                <TabsTrigger value="mapa" className="flex items-center gap-2">
+                  <Armchair className="w-4 h-4" />
+                  Mapa de Assentos
+                </TabsTrigger>
+                <TabsTrigger value="whatsapp" className="flex items-center gap-2">
+                  <MessageCircle className="w-4 h-4" />
+                  WhatsApp Web
+                </TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="mapa" className="mt-0">
             <div className="mb-6">
               <div className="flex flex-wrap items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
@@ -660,6 +735,121 @@ export default function Assentos() {
                 </div>
               </div>
             )}
+              </TabsContent>
+
+              <TabsContent value="whatsapp" className="mt-0">
+                <div className="space-y-6">
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
+                        <MessageCircle className="w-6 h-6 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="font-bold text-gray-900 text-lg">WhatsApp Web Integrado</h3>
+                        <p className="text-sm text-gray-600">Envie mensagens diretamente para seus clientes</p>
+                      </div>
+                    </div>
+
+                    <div className="bg-white rounded-lg p-4 mb-4">
+                      <h4 className="font-semibold text-gray-900 mb-3">📝 Mensagem Personalizada para Grupo</h4>
+                      <textarea
+                        value={mensagemGrupo}
+                        onChange={(e) => setMensagemGrupo(e.target.value)}
+                        placeholder="Digite uma mensagem personalizada para enviar a múltiplos clientes..."
+                        className="w-full border border-gray-300 rounded-lg p-3 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-green-500"
+                      />
+                      <div className="flex justify-between items-center mt-3">
+                        <p className="text-sm text-gray-600">
+                          {selectedClientes.length} cliente(s) selecionado(s)
+                        </p>
+                        <Button
+                          onClick={enviarWhatsAppGrupo}
+                          disabled={selectedClientes.length === 0}
+                          className="bg-green-500 hover:bg-green-600"
+                        >
+                          <MessageCircle className="w-4 h-4 mr-2" />
+                          Enviar para Selecionados
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                    <Input
+                      placeholder="Buscar cliente por nome, CPF ou telefone..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="pl-10"
+                    />
+                  </div>
+
+                  <div className="grid gap-3">
+                    {clientesDaViagem
+                      .filter(cliente => {
+                        if (!searchTerm) return true;
+                        const search = searchTerm.toLowerCase();
+                        return (
+                          cliente.nome_completo?.toLowerCase().includes(search) ||
+                          cliente.cpf?.includes(search) ||
+                          cliente.telefone?.includes(search)
+                        );
+                      })
+                      .map(cliente => (
+                        <div
+                          key={cliente.id}
+                          className={`bg-white rounded-xl border-2 p-4 transition-all hover:shadow-md ${
+                            selectedClientes.includes(cliente.id)
+                              ? 'border-green-500 bg-green-50'
+                              : 'border-gray-200'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4 flex-1">
+                              <input
+                                type="checkbox"
+                                checked={selectedClientes.includes(cliente.id)}
+                                onChange={() => toggleClienteSelection(cliente.id)}
+                                className="w-5 h-5 text-green-600 rounded focus:ring-green-500"
+                              />
+                              <div className="flex-1">
+                                <div className="flex items-center gap-2">
+                                  <h4 className="font-semibold text-gray-900">{cliente.nome_completo}</h4>
+                                  {cliente.poltrona && (
+                                    <Badge variant="outline" className="text-xs">
+                                      <Armchair className="w-3 h-3 mr-1" />
+                                      #{cliente.poltrona}
+                                    </Badge>
+                                  )}
+                                </div>
+                                <div className="flex flex-wrap gap-3 mt-1 text-sm text-gray-600">
+                                  <span>📱 {cliente.telefone || 'Sem telefone'}</span>
+                                  <span>CPF: {cliente.cpf}</span>
+                                  {cliente.local_embarque && (
+                                    <span className="flex items-center gap-1">
+                                      <MapPin className="w-3 h-3" />
+                                      {cliente.local_embarque}
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                            <Button
+                              onClick={() => enviarWhatsApp(cliente)}
+                              disabled={!cliente.telefone}
+                              variant="outline"
+                              className="text-green-600 border-green-200 hover:bg-green-50"
+                            >
+                              <MessageCircle className="w-4 h-4 mr-2" />
+                              Enviar
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
           </CardContent>
         )}
 
