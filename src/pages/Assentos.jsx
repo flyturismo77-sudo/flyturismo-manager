@@ -149,6 +149,10 @@ export default function Assentos() {
     ].sort((a, b) => {
       const corCompare = getCoresOrdem(a?.cor_grupo || '') - getCoresOrdem(b?.cor_grupo || '');
       if (corCompare !== 0) return corCompare;
+      
+      const grupoCompare = (a?.numero_grupo || 1) - (b?.numero_grupo || 1);
+      if (grupoCompare !== 0) return grupoCompare;
+      
       return (a?.nome_completo || '').localeCompare(b?.nome_completo || '');
     });
 
@@ -288,7 +292,10 @@ export default function Assentos() {
       }
 
       const corBolinha = c?.cor_grupo && coresHex[c.cor_grupo] 
-        ? `<div style="width: 16px; height: 16px; border-radius: 50%; background: ${coresHex[c.cor_grupo]}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>`
+        ? `<div style="display: inline-flex; align-items: center; gap: 4px;">
+             <div style="width: 16px; height: 16px; border-radius: 50%; background: ${coresHex[c.cor_grupo]}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+             <span style="font-size: 10px; font-weight: bold; color: #64748b;">G${c.numero_grupo || 1}</span>
+           </div>`
         : '-';
 
       html += `

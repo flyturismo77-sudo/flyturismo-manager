@@ -48,8 +48,9 @@ export default function DetalhesViagem() {
     data_nascimento: '',
     idade: '',
     e_crianca_colo: false,
-    cor_grupo: ''
-  });
+    cor_grupo: '',
+    numero_grupo: 1
+    });
 
   const { data: viagem } = useQuery({
     queryKey: ['viagem', viagemId],
@@ -180,8 +181,9 @@ export default function DetalhesViagem() {
       idade: '',
       e_crianca_colo: false,
       cor_grupo: '',
+      numero_grupo: 1,
       observacoes: ''
-    });
+      });
     setEditingCliente(null);
     // Removed setSelectedPoltrona(null);
   };
@@ -205,8 +207,9 @@ export default function DetalhesViagem() {
       idade: cliente.idade || 0,
       e_crianca_colo: cliente.e_crianca_colo || false,
       cor_grupo: cliente.cor_grupo || '',
+      numero_grupo: cliente.numero_grupo || 1,
       observacoes: cliente.observacoes || ''
-    });
+      });
     setShowClienteForm(true);
   };
 
@@ -324,6 +327,10 @@ export default function DetalhesViagem() {
     const listaImpressao = [...clientes].sort((a, b) => {
       const corCompare = getCoresOrdem(a?.cor_grupo || '') - getCoresOrdem(b?.cor_grupo || '');
       if (corCompare !== 0) return corCompare;
+      
+      const grupoCompare = (a?.numero_grupo || 1) - (b?.numero_grupo || 1);
+      if (grupoCompare !== 0) return grupoCompare;
+      
       return (a?.nome_completo || '').localeCompare(b?.nome_completo || '');
     });
 
@@ -418,7 +425,10 @@ export default function DetalhesViagem() {
       }
 
       const corBolinha = c?.cor_grupo && coresHex[c.cor_grupo] 
-        ? `<div style="width: 16px; height: 16px; border-radius: 50%; background: ${coresHex[c.cor_grupo]}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>`
+        ? `<div style="display: inline-flex; align-items: center; gap: 4px;">
+             <div style="width: 16px; height: 16px; border-radius: 50%; background: ${coresHex[c.cor_grupo]}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+             <span style="font-size: 10px; font-weight: bold; color: #64748b;">G${c.numero_grupo || 1}</span>
+           </div>`
         : '-';
 
       html += `
@@ -749,6 +759,10 @@ export default function DetalhesViagem() {
                 };
                 const corCompare = getCoresOrdem(a?.cor_grupo || '') - getCoresOrdem(b?.cor_grupo || '');
                 if (corCompare !== 0) return corCompare;
+                
+                const grupoCompare = (a?.numero_grupo || 1) - (b?.numero_grupo || 1);
+                if (grupoCompare !== 0) return grupoCompare;
+                
                 return (a?.nome_completo || '').localeCompare(b?.nome_completo || '');
               })
               .map((cliente, index) => {
@@ -768,12 +782,15 @@ export default function DetalhesViagem() {
               <div key={cliente.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-3 flex-1">
-                    <div className="flex items-center gap-2 min-w-[60px]">
-                      <span className="text-sm font-bold text-gray-500">#{index + 1}</span>
-                      {cliente?.cor_grupo && coresDisplay[cliente.cor_grupo] && (
-                        <div className={`w-5 h-5 rounded-full ${coresDisplay[cliente.cor_grupo]} border-2 border-white shadow-md`} title={cliente.cor_grupo}></div>
-                      )}
-                    </div>
+                    <div className="flex items-center gap-2 min-w-[80px]">
+                       <span className="text-sm font-bold text-gray-500">#{index + 1}</span>
+                       {cliente?.cor_grupo && coresDisplay[cliente.cor_grupo] && (
+                         <div className="flex items-center gap-1">
+                           <div className={`w-5 h-5 rounded-full ${coresDisplay[cliente.cor_grupo]} border-2 border-white shadow-md`} title={`${cliente.cor_grupo} - Grupo ${cliente.numero_grupo || 1}`}></div>
+                           <span className="text-xs font-semibold text-gray-600">G{cliente.numero_grupo || 1}</span>
+                         </div>
+                       )}
+                     </div>
                     <div className="flex-1">
                     <h4 className="font-semibold text-gray-900 flex items-center gap-2">
                       {cliente.nome_completo}

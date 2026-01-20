@@ -189,6 +189,7 @@ export default function Clientes() {
       valor_total_pacote: 0,
       valor_pago: 0,
       cor_grupo: '',
+      numero_grupo: 1,
       observacoes: ''
     });
     setAcompanhantes([]);
@@ -415,6 +416,7 @@ export default function Clientes() {
       valor_total_pacote: cliente.valor_total_pacote || 0,
       valor_pago: cliente.valor_pago || 0,
       cor_grupo: cliente.cor_grupo || '',
+      numero_grupo: cliente.numero_grupo || 1,
       observacoes: cliente.observacoes || ''
     });
     setShowForm(true);
