@@ -130,72 +130,99 @@ Qualquer dúvida, estamos à disposição!` : '\n\nComo podemos ajudar?'}`;
     }, enviados * 800 + 500);
   };
 
-  const abrirWhatsAppWeb = () => {
-    window.open('https://web.whatsapp.com', '_blank', 'width=1200,height=800');
-  };
+  const [mostrarWhatsApp, setMostrarWhatsApp] = useState(true);
 
   return (
-    <div className="p-6 md:p-8 space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-              <MessageCircle className="w-6 h-6 text-white" />
-            </div>
-            WhatsApp Integrado
-          </h1>
-          <p className="text-gray-500 mt-1">Envie mensagens diretamente para seus clientes</p>
-        </div>
-        <Button
-          onClick={abrirWhatsAppWeb}
-          className="bg-green-500 hover:bg-green-600 text-white"
-          size="lg"
-        >
-          <ExternalLink className="w-5 h-5 mr-2" />
-          Abrir WhatsApp Web
-        </Button>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Card className="border-green-200 bg-green-50">
-          <CardContent className="pt-6">
+    <div className="h-[calc(100vh-2rem)] flex gap-4 p-4">
+      {/* WhatsApp Web Integrado */}
+      {mostrarWhatsApp && (
+        <div className="w-2/3 bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden flex flex-col">
+          <div className="bg-gradient-to-r from-green-600 to-green-500 text-white p-4 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center">
-                <Users className="w-6 h-6 text-white" />
+              <MessageCircle className="w-6 h-6" />
+              <div>
+                <h2 className="font-bold text-lg">WhatsApp Web</h2>
+                <p className="text-xs text-green-100">Integrado ao sistema</p>
+              </div>
+            </div>
+            <Button
+              onClick={() => setMostrarWhatsApp(false)}
+              variant="ghost"
+              size="sm"
+              className="text-white hover:bg-green-700"
+            >
+              Ocultar
+            </Button>
+          </div>
+          <iframe
+            src="https://web.whatsapp.com"
+            className="w-full h-full border-none"
+            title="WhatsApp Web"
+          />
+        </div>
+      )}
+
+      {/* Painel de Controle */}
+      <div className={`${mostrarWhatsApp ? 'w-1/3' : 'w-full'} overflow-y-auto space-y-4`}>
+        {!mostrarWhatsApp && (
+          <Button
+            onClick={() => setMostrarWhatsApp(true)}
+            className="w-full bg-green-500 hover:bg-green-600 mb-4"
+            size="lg"
+          >
+            <MessageCircle className="w-5 h-5 mr-2" />
+            Mostrar WhatsApp Web
+          </Button>
+        )}
+
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2 mb-2">
+            <Users className="w-6 h-6 text-green-600" />
+            Envio Rápido
+          </h1>
+          <p className="text-sm text-gray-500">Selecione clientes e envie mensagens</p>
+        </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <Card className="border-green-200 bg-green-50">
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                <Users className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{clientesFiltrados.length}</p>
-                <p className="text-sm text-gray-600">Clientes</p>
+                <p className="text-lg font-bold text-gray-900">{clientesFiltrados.length}</p>
+                <p className="text-xs text-gray-600">Clientes</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-blue-200 bg-blue-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center">
-                <CheckCircle2 className="w-6 h-6 text-white" />
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">{selectedClientes.length}</p>
-                <p className="text-sm text-gray-600">Selecionados</p>
+                <p className="text-lg font-bold text-gray-900">{selectedClientes.length}</p>
+                <p className="text-xs text-gray-600">Selecionados</p>
               </div>
             </div>
           </CardContent>
         </Card>
 
         <Card className="border-purple-200 bg-purple-50">
-          <CardContent className="pt-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-purple-500 rounded-full flex items-center justify-center">
-                <Send className="w-6 h-6 text-white" />
+          <CardContent className="p-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center">
+                <Send className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-lg font-bold text-gray-900">
                   {clientesFiltrados.filter(c => c.telefone).length}
                 </p>
-                <p className="text-sm text-gray-600">Com Telefone</p>
+                <p className="text-xs text-gray-600">Com Tel.</p>
               </div>
             </div>
           </CardContent>
@@ -203,12 +230,9 @@ Qualquer dúvida, estamos à disposição!` : '\n\nComo podemos ajudar?'}`;
       </div>
 
       <Card className="shadow-lg border-none">
-        <CardHeader className="border-b border-gray-100">
-          <CardTitle>Envio de Mensagens</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <CardContent className="p-4">
+          <div className="space-y-4">
+            <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Filtrar por Viagem (Opcional)
@@ -244,110 +268,94 @@ Qualquer dúvida, estamos à disposição!` : '\n\nComo podemos ajudar?'}`;
               </div>
             </div>
 
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl p-6">
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <MessageCircle className="w-5 h-5 text-green-600" />
-                Mensagem Personalizada para Grupo
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-lg p-3">
+              <h3 className="font-semibold text-sm text-gray-900 mb-2 flex items-center gap-2">
+                <MessageCircle className="w-4 h-4 text-green-600" />
+                Mensagem em Grupo
               </h3>
               <textarea
                 value={mensagemGrupo}
                 onChange={(e) => setMensagemGrupo(e.target.value)}
-                placeholder="Digite uma mensagem personalizada para enviar aos clientes selecionados... (Opcional - deixe vazio para usar mensagem padrão)"
-                className="w-full border border-gray-300 rounded-lg p-3 min-h-[120px] focus:outline-none focus:ring-2 focus:ring-green-500"
+                placeholder="Mensagem personalizada (opcional)..."
+                className="w-full border border-gray-300 rounded-lg p-2 min-h-[80px] text-sm focus:outline-none focus:ring-2 focus:ring-green-500"
               />
-              <div className="flex justify-between items-center mt-4">
-                <div className="flex gap-3">
+              <div className="flex justify-between items-center mt-3 gap-2">
+                <div className="flex gap-2">
                   <Button
                     onClick={selecionarTodos}
                     variant="outline"
+                    size="sm"
                     className="text-blue-600 border-blue-200 hover:bg-blue-50"
                   >
-                    {selectedClientes.length === clientesFiltrados.length ? 'Desmarcar Todos' : 'Selecionar Todos'}
+                    {selectedClientes.length === clientesFiltrados.length ? 'Desmarcar' : 'Todos'}
                   </Button>
-                  <Badge variant="outline" className="text-lg px-4 py-2">
-                    {selectedClientes.length} selecionado(s)
+                  <Badge variant="outline" className="px-3 py-1">
+                    {selectedClientes.length}
                   </Badge>
                 </div>
                 <Button
                   onClick={enviarWhatsAppGrupo}
                   disabled={selectedClientes.length === 0}
+                  size="sm"
                   className="bg-green-500 hover:bg-green-600"
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  Enviar para {selectedClientes.length} Cliente(s)
+                  <Send className="w-3 h-3 mr-1" />
+                  Enviar
                 </Button>
               </div>
             </div>
 
-            <div className="space-y-3">
-              <h3 className="font-semibold text-gray-900">
-                Lista de Clientes ({clientesFiltrados.length})
+            <div className="space-y-2">
+              <h3 className="font-semibold text-sm text-gray-900">
+                Clientes ({clientesFiltrados.length})
               </h3>
               
               {clientesFiltrados.length === 0 ? (
-                <div className="text-center py-12 text-gray-500">
-                  <MessageCircle className="w-16 h-16 mx-auto mb-4 text-gray-300" />
-                  <p>Nenhum cliente encontrado</p>
+                <div className="text-center py-8 text-gray-500">
+                  <MessageCircle className="w-12 h-12 mx-auto mb-2 text-gray-300" />
+                  <p className="text-sm">Nenhum cliente encontrado</p>
                 </div>
               ) : (
-                <div className="grid gap-3 max-h-[600px] overflow-y-auto pr-2">
+                <div className="space-y-2 max-h-[500px] overflow-y-auto pr-1">
                   {clientesFiltrados.map(cliente => (
                     <div
                       key={cliente.id}
-                      className={`bg-white rounded-xl border-2 p-4 transition-all hover:shadow-md ${
+                      className={`bg-white rounded-lg border p-2 transition-all hover:shadow-sm ${
                         selectedClientes.includes(cliente.id)
                           ? 'border-green-500 bg-green-50'
                           : 'border-gray-200'
                       }`}
                     >
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4 flex-1">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 flex-1 min-w-0">
                           <input
                             type="checkbox"
                             checked={selectedClientes.includes(cliente.id)}
                             onChange={() => toggleClienteSelection(cliente.id)}
-                            className="w-5 h-5 text-green-600 rounded focus:ring-green-500"
+                            className="w-4 h-4 text-green-600 rounded focus:ring-green-500"
                           />
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-1">
-                              <h4 className="font-semibold text-gray-900">{cliente.nome_completo}</h4>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-1 mb-0.5">
+                              <h4 className="font-semibold text-sm text-gray-900 truncate">{cliente.nome_completo}</h4>
                               {cliente.poltrona && (
-                                <Badge variant="outline" className="text-xs">
-                                  <Armchair className="w-3 h-3 mr-1" />
+                                <Badge variant="outline" className="text-[10px] px-1 py-0">
                                   #{cliente.poltrona}
                                 </Badge>
                               )}
-                              {!cliente.telefone && (
-                                <Badge variant="destructive" className="text-xs">
-                                  Sem telefone
-                                </Badge>
-                              )}
                             </div>
-                            <div className="flex flex-wrap gap-3 text-sm text-gray-600">
-                              <span>📱 {cliente.telefone || 'Sem telefone'}</span>
-                              <span>CPF: {cliente.cpf}</span>
-                              {cliente.local_embarque && (
-                                <span className="flex items-center gap-1">
-                                  <MapPin className="w-3 h-3" />
-                                  {cliente.local_embarque}
-                                </span>
-                              )}
+                            <div className="text-xs text-gray-600 truncate">
+                              📱 {cliente.telefone || 'Sem tel.'}
                             </div>
-                            {viagemSelecionada && (
-                              <div className="mt-2 text-xs text-gray-500">
-                                {viagemSelecionada.nome} - {format(new Date(viagemSelecionada.data_saida), "dd/MM/yyyy")}
-                              </div>
-                            )}
                           </div>
                         </div>
                         <Button
                           onClick={() => enviarWhatsApp(cliente)}
                           disabled={!cliente.telefone}
+                          size="sm"
                           variant="outline"
-                          className="text-green-600 border-green-200 hover:bg-green-50"
+                          className="text-green-600 border-green-200 hover:bg-green-50 h-8 px-2"
                         >
-                          <MessageCircle className="w-4 h-4 mr-2" />
-                          Enviar
+                          <MessageCircle className="w-3 h-3" />
                         </Button>
                       </div>
                     </div>
