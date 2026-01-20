@@ -262,9 +262,10 @@ export default function MapaQuartos() {
               ${hospedes.map((h, hIndex) => {
                   const nome = h?.nome_completo || 'Sem Nome';
                   const cpf = h?.cpf || '-';
-                  const corBolinha = h?.cor_grupo && coresHex[h.cor_grupo] 
+                  const corHex = getCorHex(h?.cor_grupo, h?.numero_grupo);
+                  const corBolinha = corHex
                     ? `<div style="display: inline-flex; align-items: center; gap: 3px; margin-right: 6px; vertical-align: middle;">
-                         <div style="width: 14px; height: 14px; border-radius: 50%; background: ${coresHex[h.cor_grupo]}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></div>
+                         <div style="width: 14px; height: 14px; border-radius: 50%; background: ${corHex}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 2px rgba(0,0,0,0.2);"></div>
                          <span style="font-size: 9px; font-weight: bold; color: #64748b;">G${h.numero_grupo || 1}</span>
                        </div>`
                     : '';

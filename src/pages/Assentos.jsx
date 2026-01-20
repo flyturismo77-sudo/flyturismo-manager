@@ -245,16 +245,22 @@ export default function Assentos() {
           <tbody>
     `;
 
-    const coresHex = {
-      vermelho: '#ef4444',
-      azul: '#3b82f6',
-      verde: '#10b981',
-      amarelo: '#eab308',
-      roxo: '#a855f7',
-      rosa: '#ec4899',
-      laranja: '#f97316',
-      marrom: '#92400e',
-      cinza: '#6b7280'
+    const getCorHex = (cor, grupo) => {
+      if (!cor) return null;
+      const numGrupo = grupo || 1;
+      const coresHex = {
+        vermelho: ['#fca5a5', '#ef4444', '#b91c1c', '#7f1d1d'],
+        azul: ['#93c5fd', '#3b82f6', '#1d4ed8', '#1e3a8a'],
+        verde: ['#6ee7b7', '#10b981', '#047857', '#064e3b'],
+        amarelo: ['#fde047', '#eab308', '#a16207', '#713f12'],
+        roxo: ['#d8b4fe', '#a855f7', '#7e22ce', '#581c87'],
+        rosa: ['#f9a8d4', '#ec4899', '#be185d', '#831843'],
+        laranja: ['#fdba74', '#f97316', '#c2410c', '#7c2d12'],
+        marrom: ['#d97706', '#b45309', '#92400e', '#78350f'],
+        cinza: ['#d1d5db', '#6b7280', '#374151', '#1f2937']
+      };
+      const grupoIndex = (numGrupo - 1) % 4;
+      return coresHex[cor]?.[grupoIndex] || coresHex[cor]?.[0];
     };
 
     allPassengers.forEach((c, index) => {
@@ -296,9 +302,10 @@ export default function Assentos() {
         assentoDisplay = `<span class="seat-badge">#${c.poltrona}</span>`;
       }
 
-      const corBolinha = c?.cor_grupo && coresHex[c.cor_grupo] 
+      const corHex = getCorHex(c?.cor_grupo, c?.numero_grupo);
+      const corBolinha = corHex
         ? `<div style="display: inline-flex; align-items: center; gap: 4px;">
-             <div style="width: 16px; height: 16px; border-radius: 50%; background: ${coresHex[c.cor_grupo]}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
+             <div style="width: 16px; height: 16px; border-radius: 50%; background: ${corHex}; display: inline-block; border: 2px solid #fff; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>
              <span style="font-size: 10px; font-weight: bold; color: #64748b;">G${c.numero_grupo || 1}</span>
            </div>`
         : '-';
