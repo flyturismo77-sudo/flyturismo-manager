@@ -366,6 +366,7 @@ Qualquer dúvida, estamos à disposição!` : '\n\nComo podemos ajudar?'}`;
           </div>
         </CardContent>
       </Card>
+      </div>
     </div>
   );
 }
