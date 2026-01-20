@@ -548,34 +548,17 @@ export default function DetalhesViagem() {
   const criancasColo = clientes.filter(c => c.e_crianca_colo).length;
   const acompanhantesCount = clientes.filter(c => c.id_cliente_principal).length;
 
-  const getCoresOrdem = React.useCallback((cor) => {
-    const ordem = { vermelho: 1, azul: 2, verde: 3, amarelo: 4, roxo: 5, rosa: 6, laranja: 7, marrom: 8, cinza: 9, '': 10 };
-    return ordem[cor] || 10;
-  }, []);
-
-  const filteredAndSortedClientes = React.useMemo(() => {
-    const filtered = clientes.filter(cliente => {
-      if (!searchTerm) return true;
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        cliente.nome_completo?.toLowerCase().includes(searchLower) ||
-        cliente.cpf?.includes(searchLower) ||
-        cliente.telefone?.includes(searchLower) ||
-        cliente.nome_crianca_colo?.toLowerCase().includes(searchLower) ||
-        (cliente.poltrona && cliente.poltrona.toString().includes(searchLower))
-      );
-    });
-
-    return filtered.sort((a, b) => {
-      const corCompare = getCoresOrdem(a?.cor_grupo || '') - getCoresOrdem(b?.cor_grupo || '');
-      if (corCompare !== 0) return corCompare;
-      
-      const grupoCompare = (a?.numero_grupo || 1) - (b?.numero_grupo || 1);
-      if (grupoCompare !== 0) return grupoCompare;
-      
-      return (a?.nome_completo || '').localeCompare(b?.nome_completo || '');
-    });
-  }, [clientes, searchTerm, getCoresOrdem]);
+  const filteredClientes = clientes.filter(cliente => {
+    if (!searchTerm) return true;
+    const searchLower = searchTerm.toLowerCase();
+    return (
+      cliente.nome_completo?.toLowerCase().includes(searchLower) ||
+      cliente.cpf?.includes(searchLower) ||
+      cliente.telefone?.includes(searchLower) ||
+      cliente.nome_crianca_colo?.toLowerCase().includes(searchLower) ||
+      (cliente.poltrona && cliente.poltrona.toString().includes(searchLower))
+    );
+  });
 
   const modeloNome = viagem.modelo_onibus === 'DD' ? 'Double Deck' : viagem.modelo_onibus === 'VAN' ? 'VAN' : 'Low Driver';
 
@@ -781,31 +764,21 @@ export default function DetalhesViagem() {
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-3">
-            {filteredAndSortedClientes
-              .map((cliente, index, array) => {
-                const coresDisplay = {
-                  vermelho: 'bg-red-500',
-                  azul: 'bg-blue-500',
-                  verde: 'bg-green-500',
-                  amarelo: 'bg-yellow-500',
-                  roxo: 'bg-purple-500',
-                  rosa: 'bg-pink-500',
-                  laranja: 'bg-orange-500',
-                  marrom: 'bg-amber-800',
-                  cinza: 'bg-gray-500'
-                };
+            {filteredClientes.map((cliente, index) => {
+              const coresDisplay = {
+                vermelho: 'bg-red-500',
+                azul: 'bg-blue-500',
+                verde: 'bg-green-500',
+                amarelo: 'bg-yellow-500',
+                roxo: 'bg-purple-500',
+                rosa: 'bg-pink-500',
+                laranja: 'bg-orange-500',
+                marrom: 'bg-amber-800',
+                cinza: 'bg-gray-500'
+              };
 
-                const prevCliente = index > 0 ? array[index - 1] : null;
-                const isNewGroup = prevCliente && (
-                  prevCliente.cor_grupo !== cliente.cor_grupo || 
-                  prevCliente.numero_grupo !== cliente.numero_grupo
-                );
-
-                return (
-                  <React.Fragment key={cliente.id}>
-                    {isNewGroup && (
-                      <div className="h-px bg-gradient-to-r from-transparent via-gray-300 to-transparent my-2"></div>
-                    )}
+              return (
+                <React.Fragment key={cliente.id}>
               <div key={cliente.id} className="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-3 flex-1">
@@ -883,7 +856,7 @@ export default function DetalhesViagem() {
                   </React.Fragment>
                   );
                   })}
-            {filteredAndSortedClientes.length === 0 && (
+            {filteredClientes.length === 0 && (
               <div className="text-center py-12 text-gray-500">
                 <Users className="w-16 h-16 mx-auto mb-4 text-gray-300" />
                 <p className="mb-4">Nenhum passageiro cadastrado nesta viagem ainda</p>
