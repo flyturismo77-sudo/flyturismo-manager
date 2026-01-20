@@ -21,6 +21,7 @@ import Sobre from './pages/Sobre';
 import Usuarios from './pages/Usuarios';
 import Viagens from './pages/Viagens';
 import ViagensPublico from './pages/ViagensPublico';
+import WhatsApp from './pages/WhatsApp';
 import __Layout from './Layout.jsx';
 
 
@@ -48,6 +49,7 @@ export const PAGES = {
     "Usuarios": Usuarios,
     "Viagens": Viagens,
     "ViagensPublico": ViagensPublico,
+    "WhatsApp": WhatsApp,
 }
 
 export const pagesConfig = {

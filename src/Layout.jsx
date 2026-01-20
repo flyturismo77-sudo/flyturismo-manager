@@ -189,6 +189,11 @@ export default function Layout({ children, currentPageName }) {
       url: createPageUrl("MapaQuartos"),
       icon: Hotel,
     },
+    {
+      title: "WhatsApp",
+      url: createPageUrl("WhatsApp"),
+      icon: MessageSquare,
+    },
     ...(isAdmin ? [
       {
         title: "Financeiro",
