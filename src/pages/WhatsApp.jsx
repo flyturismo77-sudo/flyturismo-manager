@@ -130,58 +130,37 @@ Qualquer dúvida, estamos à disposição!` : '\n\nComo podemos ajudar?'}`;
     }, enviados * 800 + 500);
   };
 
-  const [mostrarWhatsApp, setMostrarWhatsApp] = useState(true);
+  const abrirWhatsAppWeb = () => {
+    window.open('https://web.whatsapp.com', 'WhatsApp', 'width=1400,height=900,scrollbars=yes,resizable=yes');
+  };
 
   return (
-    <div className="h-[calc(100vh-2rem)] flex gap-4 p-4">
-      {/* WhatsApp Web Integrado */}
-      {mostrarWhatsApp && (
-        <div className="w-2/3 bg-white rounded-xl shadow-lg border-2 border-gray-200 overflow-hidden flex flex-col">
-          <div className="bg-gradient-to-r from-green-600 to-green-500 text-white p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <MessageCircle className="w-6 h-6" />
-              <div>
-                <h2 className="font-bold text-lg">WhatsApp Web</h2>
-                <p className="text-xs text-green-100">Integrado ao sistema</p>
-              </div>
+    <div className="p-6 space-y-6">
+      <div className="bg-gradient-to-r from-green-600 to-green-500 text-white rounded-xl p-6 shadow-lg">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+              <MessageCircle className="w-8 h-8" />
             </div>
-            <Button
-              onClick={() => setMostrarWhatsApp(false)}
-              variant="ghost"
-              size="sm"
-              className="text-white hover:bg-green-700"
-            >
-              Ocultar
-            </Button>
+            <div>
+              <h1 className="text-2xl font-bold">WhatsApp Integrado</h1>
+              <p className="text-green-100 text-sm">Envie mensagens personalizadas para seus clientes</p>
+            </div>
           </div>
-          <iframe
-            src="https://web.whatsapp.com"
-            className="w-full h-full border-none"
-            title="WhatsApp Web"
-          />
-        </div>
-      )}
-
-      {/* Painel de Controle */}
-      <div className={`${mostrarWhatsApp ? 'w-1/3' : 'w-full'} overflow-y-auto space-y-4`}>
-        {!mostrarWhatsApp && (
           <Button
-            onClick={() => setMostrarWhatsApp(true)}
-            className="w-full bg-green-500 hover:bg-green-600 mb-4"
+            onClick={abrirWhatsAppWeb}
+            className="bg-white text-green-600 hover:bg-green-50"
             size="lg"
           >
-            <MessageCircle className="w-5 h-5 mr-2" />
-            Mostrar WhatsApp Web
+            <ExternalLink className="w-5 h-5 mr-2" />
+            Abrir WhatsApp Web
           </Button>
-        )}
-
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900 flex items-center gap-2 mb-2">
-            <Users className="w-6 h-6 text-green-600" />
-            Envio Rápido
-          </h1>
-          <p className="text-sm text-gray-500">Selecione clientes e envie mensagens</p>
         </div>
+      </div>
+
+      <div className="overflow-y-auto space-y-4">
+
+
 
       <div className="grid grid-cols-3 gap-3">
         <Card className="border-green-200 bg-green-50">
