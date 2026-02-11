@@ -20,7 +20,8 @@ import {
   UsersRound,
   HardDrive,
   Activity,
-  RefreshCw
+  RefreshCw,
+  Database
 } from "lucide-react";
 import {
   Sidebar,
@@ -41,7 +42,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
-const adminPages = ["Dashboard", "Viagens", "Clientes", "Assentos", "MapaQuartos", "Financeiro", "PagamentosEmpresa", "Fornecedores", "Equipe", "Relatorios", "Formularios", "Configuracoes", "Mensagens", "Usuarios", "GerenciamentoArquivos", "LogsAuditoria", "MigracaoDD"];
+const adminPages = ["Dashboard", "Viagens", "Clientes", "Assentos", "MapaQuartos", "Financeiro", "PagamentosEmpresa", "Fornecedores", "Equipe", "Relatorios", "Formularios", "Configuracoes", "Mensagens", "Usuarios", "GerenciamentoArquivos", "LogsAuditoria", "MigracaoDD", "Exportacao", "WhatsApp"];
 const publicPages = ["Home", "Sobre", "ViagensPublico", "Contato", "FormularioContrato"];
 
 export default function Layout({ children, currentPageName }) {
@@ -246,6 +247,11 @@ export default function Layout({ children, currentPageName }) {
         title: "Logs",
         url: createPageUrl("LogsAuditoria"),
         icon: Activity,
+      },
+      {
+        title: "Exportação",
+        url: createPageUrl("Exportacao"),
+        icon: Database,
       },
       ...(migrationNeeded ? [{
         title: "⚠️ Migração DD",
