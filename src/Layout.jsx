@@ -21,7 +21,8 @@ import {
   HardDrive,
   Activity,
   RefreshCw,
-  Database
+  Database,
+  BookOpen
 } from "lucide-react";
 import {
   Sidebar,
@@ -42,7 +43,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery } from "@tanstack/react-query";
 import ErrorBoundary from "@/components/ErrorBoundary";
 
-const adminPages = ["Dashboard", "Viagens", "Clientes", "Assentos", "MapaQuartos", "Financeiro", "PagamentosEmpresa", "Fornecedores", "Equipe", "Relatorios", "Formularios", "Configuracoes", "Mensagens", "Usuarios", "GerenciamentoArquivos", "LogsAuditoria", "MigracaoDD", "Exportacao", "WhatsApp"];
+const adminPages = ["Dashboard", "Viagens", "Clientes", "Assentos", "MapaQuartos", "Financeiro", "PagamentosEmpresa", "Fornecedores", "Equipe", "Relatorios", "Formularios", "Configuracoes", "Mensagens", "Usuarios", "GerenciamentoArquivos", "LogsAuditoria", "MigracaoDD", "Exportacao", "WhatsApp", "Documentacao"];
 const publicPages = ["Home", "Sobre", "ViagensPublico", "Contato", "FormularioContrato"];
 
 export default function Layout({ children, currentPageName }) {
@@ -252,6 +253,11 @@ export default function Layout({ children, currentPageName }) {
         title: "Exportação",
         url: createPageUrl("Exportacao"),
         icon: Database,
+      },
+      {
+        title: "Documentação",
+        url: createPageUrl("Documentacao"),
+        icon: BookOpen,
       },
       ...(migrationNeeded ? [{
         title: "⚠️ Migração DD",
